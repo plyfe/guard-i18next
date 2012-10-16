@@ -5,26 +5,33 @@ require 'yaml'
 
 module Guard
   class I18n < Guard
+    
+    DEFAULT_OPTIONS = {
+        :output         => Pathname.pwd.join('app', 'assets', 'javascripts', 'i18n')
+        :namespace      => '(global || window).Locales'
+    }
 
-    TARGET_DIR = Pathname.pwd.join('app', 'assets', 'javascripts', 'i18n')
+    
+    # Initialize Guard::i18n-yaml-to-json.
+    #
+    # @param [Array<Guard::Watcher>] watchers the watchers in the Guard block
+    # @param [Hash] options the options for the Guard
+    # @option options [String] :output the output directory
+    #
+    def initialize(watchers = [], options = {})
+      watchers = [] if !watchers
+      defaults = DEFAULT_OPTIONS.clone
 
-    COFFEE_TPL = <<-EOS
-locale = {}
-locale.h = `%s`
-locale.t = (name) ->
-  h_result = this.h
-  for n in name.split(".")
-    if n of h_result
-      h_result = h_result[n]
-    else
-      return "missing i18n : " + name
-  return h_result
-root = exports ? this
-root.locale = locale
-      EOS
-
+      super(watchers, defaults.merge(options))
+    end
+    
+    # Gets called when watched paths and files have changes.
+    #
+    # @param [Array<String>] paths the changed paths and files
+    # @raise [:task_has_failed] when stop has failed
+    #
     def run_on_change(paths)
-      Dir::mkdir(TARGET_DIR) unless File.directory?(TARGET_DIR)
+      Dir::mkdir(options(:output)) unless File.directory?(options(:output))
 
       paths.each do |locale_path|
         filename = File.basename(locale_path, ".yml")
@@ -32,11 +39,12 @@ root.locale = locale
         locale = YAML.load(input.read)
         input.close
 
-        name = locale.keys[0]
-        content = locale[name]
-        next unless content.key?("javascript")
-        File.open(TARGET_DIR + "#{filename}.js.coffee", "w") do |f|
-          f.puts COFFEE_TPL % content["javascript"].to_json
+        locale_key = locale.keys[0]
+        content = locale[locale_key]
+        File.open(options(:output) + "#{filename}.js", "w") do |f|
+            # Initialize namespace (if it hasn't been already)
+            f.puts "#{options(:namespace)} = #{options(:namespace)} != null ? #{options(:namespace)} : {}"
+            f.puts options(:namespace) + "[#{locale_key}] = " + content.to_json
         end
       end
     end

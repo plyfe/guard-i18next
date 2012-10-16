@@ -1,7 +1,9 @@
-= Guard::I18n
+= Guard::I18next
 
-I18n guard allows to automatically rebuild javascript translations from existing *.yml of your app
-that contains a Javascript section.
+Based on Guard::I18n.
+
+I18next guard allows to automatically rebuild javascript translations from YAML files. The output can 
+be consumed by {i18next}[http://i18next.com/node/index.html] or equivalent libraries
 
 == Install
 
@@ -9,13 +11,13 @@ Please be sure to have {Guard}[http://github.com/guard/guard] installed before c
 
 Install the gem:
 
-    gem install guard-i18n
+    gem install guard-i18next
 
-Add it to your Gemfile (inside development group):
+Add it to your Gemfile:
 
-    gem 'guard-i18n', :git => TODO, :branch => TODO
+    gem 'guard-i18next'
 
-Add guard definition to your Guardfile by running this command:
+Add the guard definition to your Guardfile by running this command:
 
     guard init i18n
 
@@ -27,18 +29,33 @@ Please read {Guard usage doc}[http://github.com/guard/guard#readme]
 
 Please read {Guard doc}[http://github.com/guard/guard#readme] for more info about Guardfile DSL.
 
-    guard 'i18n' do
+    guard 'i18next' do
+      watch(%r{config/locales/.+\.yml})
+    end
+
+=== Options
+
+Specify output directory:
+
+    guard 'i18next', :output => 'path/to/output' do
+      watch(%r{config/locales/.+\.yml})
+    end
+
+Specify javascript namespace:
+
+    guard 'i18next', :namespace => 'I18n' do
       watch(%r{config/locales/.+\.yml})
     end
 
 == Development
 
-- Source hosted at {GitHub}[http://github.com/nicoolas25/guard-i18n]
+- Source: {Guard::i18next}[http://github.com/gcko/guard-i18next]
+- Based off of {Guard::i18n}[http://github.com/nicoolas25/guard-i18n]
 - Report issues/Questions/Feature requests on {GitHub Issues}[http://github.com/nicoolas25/guard-i18n/issues]
 
 Pull requests are very welcome! Make sure your patches are well tested. Please create a topic branch for every separate change
 you make.
 
 == Authors
-
+{Jared Scott}[http://github.com/gcko]
 {Nicolas Zermati}[http://github.com/nicoolas25]
