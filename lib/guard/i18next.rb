@@ -41,7 +41,7 @@ module Guard
 
         locale_key = locale.keys[0]
         content = locale[locale_key]
-        File.open(options[:output] + "#{filename}.js", "w") do |f|
+        File.open(options[:output] + "/#{filename}.js", "w") do |f|
             # Initialize namespace (if it hasn't been already)
             f.puts "#{options[:namespace]} = #{options[:namespace]} != null ? #{options[:namespace]} : {}"
             f.puts options[:namespace] + "[#{locale_key}] = " + content.to_json

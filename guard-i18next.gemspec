@@ -18,4 +18,6 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   s.add_dependency "json"
   s.add_dependency "guard"
+
+  s.add_development_dependency "rspec", "~> 2.6"
 end
