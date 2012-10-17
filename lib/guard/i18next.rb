@@ -7,7 +7,7 @@ module Guard
   class I18next < Guard
     
     DEFAULT_OPTIONS = {
-        :output         => Pathname.pwd.join('app', 'assets', 'javascripts', 'i18n')
+        :output         => Pathname.pwd.join('app', 'assets', 'javascripts', 'i18n'),
         :namespace      => '(global || window).Locales'
     }
 
@@ -31,7 +31,7 @@ module Guard
     # @raise [:task_has_failed] when stop has failed
     #
     def run_on_change(paths)
-      Dir::mkdir(options(:output)) unless File.directory?(options(:output))
+      Dir::mkdir(options[:output]) unless File.directory?(options[:output])
 
       paths.each do |locale_path|
         filename = File.basename(locale_path, ".yml")
@@ -41,10 +41,10 @@ module Guard
 
         locale_key = locale.keys[0]
         content = locale[locale_key]
-        File.open(options(:output) + "#{filename}.js", "w") do |f|
+        File.open(options[:output] + "#{filename}.js", "w") do |f|
             # Initialize namespace (if it hasn't been already)
-            f.puts "#{options(:namespace)} = #{options(:namespace)} != null ? #{options(:namespace)} : {}"
-            f.puts options(:namespace) + "[#{locale_key}] = " + content.to_json
+            f.puts "#{options[:namespace]} = #{options[:namespace]} != null ? #{options[:namespace]} : {}"
+            f.puts options[:namespace] + "[#{locale_key}] = " + content.to_json
         end
       end
     end
