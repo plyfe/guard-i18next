@@ -8,10 +8,8 @@ module Guard
     
     DEFAULT_OPTIONS = {
         :output         => Pathname.pwd.join('app', 'assets', 'javascripts', 'i18n'),
-        :namespace      => '(global || window).Locales'
     }
 
-    
     # Initialize Guard::i18next
     #
     # @param [Array<Guard::Watcher>] watchers the watchers in the Guard block
@@ -39,14 +37,11 @@ module Guard
         locale = YAML.load(input.read)
         input.close
 
-        locale_key = locale.keys[0]
-        content = locale[locale_key]
         File.open(options[:output] + "/#{filename}.json", "w") do |f|
-            # Initialize namespace (if it hasn't been already)
-            f.puts "#{options[:namespace]} = #{options[:namespace]} != null ? #{options[:namespace]} : {}"
-            f.puts options[:namespace] + "[#{locale_key}] = " + content.to_json
+            f.puts locale.to_json
         end
       end
     end
+
   end
 end
