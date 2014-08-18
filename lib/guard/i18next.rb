@@ -5,7 +5,7 @@ require 'yaml'
 
 module Guard
   class I18next < Guard
-    
+
     DEFAULT_OPTIONS = {
         :output         => Pathname.pwd.join('app', 'assets', 'javascripts', 'i18n'),
     }
@@ -22,7 +22,7 @@ module Guard
 
       super(watchers, defaults.merge(options))
     end
-    
+
     # Gets called when watched paths and files have changes.
     #
     # @param [Array<String>] paths the changed paths and files
@@ -34,11 +34,16 @@ module Guard
       paths.each do |locale_path|
         filename = File.basename(locale_path, ".yml")
         input = File.new(locale_path, 'r')
-        locale = YAML.load(input.read)
+
+        # Trim off the opening 'en'
+        locale = YAML.load(input.read).values.first
         input.close
 
-        File.open(options[:output] + "/#{filename}.json", "w") do |f|
-            f.puts locale.to_json
+        File.open(options[:output] + "/#{filename}.js", "w") do |f|
+          f.puts "window.locales = window.locales || {};"
+          f.puts "window.locales.#{filename} = {"
+          f.puts "  translation: #{locale.to_json}"
+          f.puts "};"
         end
       end
     end
